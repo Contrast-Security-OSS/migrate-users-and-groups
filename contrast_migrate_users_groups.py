@@ -1,6 +1,7 @@
 import argparse
 import logging
 import sys
+from collections.abc import Iterable
 from enum import IntEnum
 
 from contrast_api import ContrastTeamServer, contrast_instance_from_json, load_config
@@ -18,6 +19,13 @@ try:
     import inquirer
 except ImportError:
     logger.fatal("inquirer module is not installed (see README")
+    exit(1)
+
+try:
+    from rich.console import Console
+    from rich.table import Table
+except ImportError:
+    logger.fatal("rich module is not installed (see README")
     exit(1)
 
 args_parser = argparse.ArgumentParser()
@@ -105,6 +113,18 @@ def create_user(instance: ContrastTeamServer, org_id: str, existing_user: dict):
         exit(1)
 
 
+console = Console()
+
+
+def print_table(title: str, column: str, rows: Iterable[str]):
+    table = Table(title=title)
+    table.add_column(column, justify="center")
+    for row in rows:
+        table.add_row(row)
+
+    console.print(table)
+
+
 source_users_set = set(map(lambda user: user["user_uid"], source_users))
 dest_users_set = set(map(lambda user: user["user_uid"], dest_users))
 
@@ -112,16 +132,12 @@ users_to_create = set(source_users_set - dest_users_set)
 
 existing_users_in_dest = source_users_set & dest_users_set
 if existing_users_in_dest:
-    print("Users already in source and dest:")
-    for user in existing_users_in_dest:
-        print(f"\t{user}")
+    print_table("Users already in source and dest", "Username", existing_users_in_dest)
 
 if not users_to_create:
     print("No users missing in destination")
 else:
-    print("Users to create:")
-    for user in users_to_create:
-        print(f"\t{user}")
+    print_table("Users to create", "Username", users_to_create)
     if not inquirer.confirm("Okay to create user(s)?"):
         exit(1)
 
@@ -147,16 +163,12 @@ groups_to_create = set(source_groups_set - dest_groups_set)
 
 existing_groups_in_dest = source_groups_set & dest_groups_set
 if existing_groups_in_dest:
-    print("Groups already in source and dest:")
-    for group in existing_groups_in_dest:
-        print(f"\t{group}")
+    print_table("Groups already in source and dest", "Group", existing_groups_in_dest)
 
 if not groups_to_create:
     print("No groups missing in destination")
 else:
-    print("Groups to create:")
-    for group in groups_to_create:
-        print(f"\t{group}")
+    print_table("Groups to create", "Group", groups_to_create)
     if not inquirer.confirm("Okay to create group(s)?"):
         exit(1)
 
