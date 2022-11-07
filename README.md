@@ -16,6 +16,11 @@ You can run this script locally with a Python install, or, in a container with t
 
 ### Container use
 
+#### Pre-built
+```bash
+docker run -it -v $PWD/config.json:/usr/src/app/config.json ghcr.io/contrast-security-oss/migrate-users-and-groups:main <...args...>
+```
+
 #### Local build
 ```bash
 docker build . --tag contrast-migrate-users-groups # Build the container
