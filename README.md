@@ -36,9 +36,15 @@ pip3 install -r requirements.txt # Install dependencies
 python3 contrast_migrate_users_groups.py <args> # Run script
 ```
 
-## Connection and Authentication
+## Connection, Authentication, and, Usage
 
-Connection details for your source and destination environments should be specified in the format described in [`config.json.tmpl`](config.json.tmpl).
+Connection details for your `source` and `destination` environments should be specified in the format described in [`config.json.tmpl`](config.json.tmpl).
+
+The logging level defaults to `WARN`, it may be raised to `INFO` by adding the command line argument `-v` or to `DEBUG` with `-vv`.
+
+There are also the following optional environment variables:
+- `INSECURE_SKIP_CERT_VALIDATION` - set to `true` or `1` to skip TLS certificate validation on network requests
+- `HTTP_PROXY` - set to your proxy URL if a proxy is needed to reach Contrast
 
 
 ## Running
