@@ -45,25 +45,44 @@ Output should be as follows:
 testing connection with instance 'source'
 testing connection with instance 'destination'
 INFO: Listing users
-Users already in source and dest:
-        josh.anderson@contrastsecurity.com
-        testuser@contrastsecurity.com
-Users to create:
-        jenkins_api@example.org
-        jenkins@example.org
+     Users already in source and dest
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                Username                 ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│      testuser@contrastsecurity.com      │
+│   josh.anderson@contrastsecurity.com    │
+└─────────────────────────────────────────┘
+              Users to create
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                Username                 ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│          jenkins@example.org            │
+│          jenkins_api@example.org        │
+└─────────────────────────────────────────┘
 [?] Okay to create user(s)? (y/N): y
 
-Creating user 'jenkins_api@example.org'
 Creating user 'jenkins@example.org'
+Creating user 'jenkins_api@example.org'
+Creating users... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
 INFO: Listing groups and their users
-Groups already in source and dest:
-        ExampleAdminGroup
-        JenkinsMultipleOrgs
-Groups to create:
-        ExampleEditGroup
+   Groups already in
+    source and dest
+┏━━━━━━━━━━━━━━━━━━━━━┓
+┃        Group        ┃
+┡━━━━━━━━━━━━━━━━━━━━━┩
+│  ExampleAdminGroup  │
+│ JenkinsMultipleOrgs │
+└─────────────────────┘
+   Groups to create
+┏━━━━━━━━━━━━━━━━━━━━━┓
+┃        Group        ┃
+┡━━━━━━━━━━━━━━━━━━━━━┩
+│  ExampleEditGroup   │
+└─────────────────────┘
 [?] Okay to create group(s)? (y/N): y
 
 Creating group 'ExampleEditGroup' with role 'rules_admin' and member(s):
+Creating groups... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
 ```
 
 ## Development Setup
