@@ -23,6 +23,7 @@ except ImportError:
 
 try:
     from rich.console import Console
+    from rich.progress import track
     from rich.table import Table
 except ImportError:
     logger.fatal("rich module is not installed (see README")
@@ -141,10 +142,13 @@ else:
     if not inquirer.confirm("Okay to create user(s)?"):
         exit(1)
 
-for user in source_users:
-    if user["user_uid"] in users_to_create:
-        print(f"Creating user '{user['user_uid']}'")
-        create_user(recipient, recipient_org, user)
+for user in track(
+    (user for user in source_users if user["user_uid"] in users_to_create),
+    description="Creating users...",
+    total=len(users_to_create),
+):
+    print(f"Creating user '{user['user_uid']}'")
+    create_user(recipient, recipient_org, user)
 
 logger.info("Listing groups and their users")
 source_groups = donor.list_org_groups(donor_org)
@@ -203,26 +207,29 @@ class Roles(IntEnum):
     VIEW = 1
 
 
-for group in source_groups:
-    if group["name"] in groups_to_create:
-        role = group.get("role")
-        if not role:
-            role = min(
-                map(
-                    lambda application: Roles.__members__[application["role"].upper()],
-                    group["applications"],
-                )
+for group in track(
+    (group for group in source_groups if group["name"] in groups_to_create),
+    "Creating groups...",
+    total=len(groups_to_create),
+):
+    role = group.get("role")
+    if not role:
+        role = min(
+            map(
+                lambda application: Roles.__members__[application["role"].upper()],
+                group["applications"],
             )
-            role = role.name.lower()
-
-        print(
-            f"Creating group '{group['name']}' with role '{role}' and member(s): {','.join(groups_users[group['name']])}"
         )
+        role = role.name.lower()
 
-        create_group(
-            recipient,
-            recipient_org,
-            group["name"],
-            groups_users[group["name"]],
-            role,
-        )
+    print(
+        f"Creating group '{group['name']}' with role '{role}' and member(s): {','.join(groups_users[group['name']])}"
+    )
+
+    create_group(
+        recipient,
+        recipient_org,
+        group["name"],
+        groups_users[group["name"]],
+        role,
+    )
