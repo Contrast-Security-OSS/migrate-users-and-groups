@@ -4,6 +4,6 @@ glom==22.1.0
 idna==3.4
 inquirer==2.10.1
 requests==2.31.0
-rich==12.6.0
+rich==13.3.5
 urllib3==2.0.2
 voluptuous==0.13.1
