@@ -115,9 +115,8 @@ def create_user(instance: ContrastTeamServer, org_id: str, existing_user: dict):
     )
 
     if not resp.get("success", False):
-        print(resp)
-        exit(1)
-
+        print("Failed to create user " + existing_user["first_name"] + " " + existing_user["last_name"] + " " +existing_user["user_uid"] )
+        print("Details: " + str(resp))
 
 console = Console()
 
@@ -201,8 +200,7 @@ def create_group(
     )
 
     if not resp.get("success", False):
-        print(resp)
-        exit(1)
+        print("Failed to create group: " + str(resp))
 
 
 class Roles(IntEnum):
