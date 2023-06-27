@@ -218,11 +218,9 @@ class ContrastTeamServer:
                 map(lambda org: org["organization_uuid"], profile_orgs)
             )
 
-            orgs_allowed_access_to = []
-            for org in all_orgs:
-                if org["organization_uuid"] in allowed_orgs_ids:
-                    orgs_allowed_access_to.append(org)
-
+            orgs_allowed_access_to = (
+                org for org in all_orgs if org["organization_uuid"] in allowed_orgs_ids
+            )
             return orgs_allowed_access_to
 
         return self.api_request("profile/organizations")["organizations"]
