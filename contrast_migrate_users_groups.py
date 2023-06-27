@@ -95,7 +95,7 @@ source_users = donor.list_org_users(donor_org)
 dest_users = recipient.list_org_users(recipient_org)
 
 
-def create_user(instance: ContrastTeamServer, org_id: str, existing_user: dict):
+def create_user(instance: ContrastTeamServer, org_id: str, existing_user: dict) -> bool:
     resp = instance.api_request(
         f"{org_id}/users",
         "POST",
@@ -114,11 +114,14 @@ def create_user(instance: ContrastTeamServer, org_id: str, existing_user: dict):
         },
     )
 
-    if not resp.get("success", False):
+    successful = resp.get("success", False)
+    if not successful:
         print(
             f'Failed to create user {existing_user["first_name"]} {existing_user["last_name"]} {existing_user["user_uid"]}'
         )
         print(f"Details: {resp}")
+
+    return successful
 
 
 console = Console()
@@ -149,13 +152,17 @@ else:
     if not inquirer.confirm("Okay to create user(s)?"):
         exit(1)
 
+user_creation_failures = 0
+
 for user in track(
     (user for user in source_users if user["user_uid"] in users_to_create),
     description="Creating users...",
     total=len(users_to_create),
 ):
     print(f"Creating user '{user['user_uid']}'")
-    create_user(recipient, recipient_org, user)
+    created = create_user(recipient, recipient_org, user)
+    if not created:
+        user_creation_failures += 1
 
 logger.info("Listing groups and their users")
 source_groups = donor.list_org_groups(donor_org)
@@ -190,7 +197,7 @@ def create_group(
     name: str,
     users: list[str],
     onboard_role: str,
-):
+) -> bool:
     path = f"{org_id}/groups"
     resp = instance.api_request(
         path,
@@ -202,8 +209,11 @@ def create_group(
         },
     )
 
-    if not resp.get("success", False):
+    successful = resp.get("success", False)
+    if not successful:
         print(f"Failed to create group: {resp}")
+
+    return successful
 
 
 class Roles(IntEnum):
@@ -212,6 +222,8 @@ class Roles(IntEnum):
     EDIT = 2
     VIEW = 1
 
+
+group_creation_failures = 0
 
 for group in track(
     (group for group in source_groups if group["name"] in groups_to_create),
@@ -232,10 +244,23 @@ for group in track(
         f"Creating group '{group['name']}' with role '{role}' and member(s): {','.join(groups_users[group['name']])}"
     )
 
-    create_group(
+    created = create_group(
         recipient,
         recipient_org,
         group["name"],
         groups_users[group["name"]],
         role,
+    )
+
+    if not created:
+        group_creation_failures += 1
+
+if user_creation_failures != 0:
+    print(
+        "WARNING: Some user(s) could not be created, please check output above for more details."
+    )
+
+if group_creation_failures != 0:
+    print(
+        "WARNING: Some group(s) could not be created, please check output above for more details."
     )
