@@ -34,7 +34,7 @@ repos:
     rev: 23.3.0
     hooks:
       - id: black
-  - repo: https://github.com/kumaraditya303/mirrors-pyright
-    rev: v1.1.316
-    hooks:
-      - id: pyright
+  # - repo: https://github.com/kumaraditya303/mirrors-pyright
+  #   rev: v1.1.316
+  #   hooks:
+  #     - id: pyright
