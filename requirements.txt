@@ -1,4 +1,4 @@
-certifi==2023.7.22
+certifi==2024.2.2
 charset-normalizer==3.1.0
 glom==23.3.0
 idna==3.4
